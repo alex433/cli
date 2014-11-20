@@ -1,10 +1,24 @@
 {
-   "autoload":{
-      "psr-0":{
-         "Cli":"src/"
-      }
-   },
-   "require":{
-      "nategood/commando":"*"
-   }
+    "name": "alex433/cli",
+    "description": "Console util for CLI Commando",
+    "keywords": ["console", "cli", "command line"],
+    "homepage": "http://github.com/alex433/cli",
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Your Name",
+            "email": "your@name.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.0",
+        "nategood/commando":"*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Cli":"src/"
+        }
+    }
 }
