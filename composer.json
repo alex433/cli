@@ -1,0 +1,10 @@
+{
+   "autoload":{
+      "psr-0":{
+         "Cli":"src/"
+      }
+   },
+   "require":{
+      "nategood/commando":"*"
+   }
+}
