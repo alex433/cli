@@ -20,13 +20,18 @@ class Console
 
     public static function error($msg)
     {
-        fwrite(static::$err, $msg . PHP_EOL);
+        fwrite(static::$err, $msg);
+    }
+
+    public static function errorLn($msg)
+    {
+        self:error($msg . PHP_EOL);
     }
 
     public static function niceError($msg)
     {
         $color = new \Colors\Color();
-        self::error($color(sprintf('ERROR: %s ', $msg))->bg('red')->bold()->white());
+        self::errorLn($color($msg)->bg('red')->bold()->white());
     }
 
     public static function execute($funciton)
