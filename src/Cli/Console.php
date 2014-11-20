@@ -28,10 +28,20 @@ class Console
         self:error($msg . PHP_EOL);
     }
 
-    public static function niceError($msg)
+    public static function msgError($msg)
     {
         $color = new \Colors\Color();
         self::errorLn($color($msg)->bg('red')->bold()->white());
+    }
+
+    public static function msgSuccess($msg)
+    {
+        $color = new \Colors\Color();
+        self::writeLn(
+            $color(
+                \Commando\Util\Terminal::header(' ' . $msg))
+                    ->white()->bg('green')->bold()
+            );
     }
 
     public static function execute($funciton)
@@ -46,7 +56,7 @@ class Console
                 $e->getFile(),
                 $e->getLine()
             );
-            self::niceError($msg);
+            self::msgError($msg);
 
             $color = new \Colors\Color();
 
