@@ -8,42 +8,42 @@ class Console
     public static $in = STDIN;
     public static $err = STDERR;
 
-    public static function write($msg)
+    public static function write($msg, $nb_eol = 0)
     {
-        fwrite(static::$out, $msg);
+        fwrite(static::$out, $msg . str_repeat(PHP_EOL, $nb_eol));
     }
 
-    public static function writeLn($msg)
+    public static function writeLn($msg, $nb_eol = 1)
     {
-        self::write($msg . PHP_EOL);
+        self::write($msg, $nb_eol);
     }
 
-    public static function error($msg)
+    public static function error($msg, $nb_eol = 0)
     {
-        fwrite(static::$err, $msg);
+        fwrite(static::$err, $msg . str_repeat(PHP_EOL, $nb_eol));
     }
 
-    public static function errorLn($msg)
+    public static function errorLn($msg, $nb_eol = 1)
     {
-        self::error($msg . PHP_EOL);
+        self::error($msg, $nb_eol);
     }
 
-    public static function msgError($msg)
+    public static function msgError($msg, $nb_eol = 1)
     {
         $color = new \Colors\Color();
-        self::errorLn($color($msg)->bg('red')->bold()->white());
+        self::errorLn($color($msg)->bg('red')->bold()->white(), $nb_eol);
     }
 
-    public static function msgSuccess($msg)
+    public static function msgSuccess($msg, $nb_eol = 2)
     {
         $color = new \Colors\Color();
         self::writeLn('');
         self::writeLn(
             $color(
                 \Commando\Util\Terminal::header(' ' . $msg)
-            )->white()->bg('green')->bold()
+            )->white()->bg('green')->bold(),
+            $nb_eol
         );
-        self::writeLn('');
     }
 
     public static function execute($funciton)
