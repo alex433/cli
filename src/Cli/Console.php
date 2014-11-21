@@ -37,11 +37,13 @@ class Console
     public static function msgSuccess($msg)
     {
         $color = new \Colors\Color();
+        self::writeLn('');
         self::writeLn(
             $color(
-                \Commando\Util\Terminal::header(' ' . $msg))
-                    ->white()->bg('green')->bold()
-            );
+                \Commando\Util\Terminal::header(' ' . $msg)
+            )->white()->bg('green')->bold()
+        );
+        self::writeLn('');
     }
 
     public static function execute($funciton)
