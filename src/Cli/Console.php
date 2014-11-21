@@ -25,7 +25,7 @@ class Console
 
     public static function errorLn($msg)
     {
-        self:error($msg . PHP_EOL);
+        self::error($msg . PHP_EOL);
     }
 
     public static function msgError($msg)
