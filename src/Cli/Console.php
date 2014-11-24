@@ -8,6 +8,9 @@ class Console
     public static $in = STDIN;
     public static $err = STDERR;
 
+    public static $beep_on_error = true;
+    public static $set_error_handler = true;
+
     public static function write($msg, $nb_eol = 0)
     {
         fwrite(static::$out, $msg . str_repeat(PHP_EOL, $nb_eol));
@@ -15,7 +18,7 @@ class Console
 
     public static function writeLn($msg, $nb_eol = 1)
     {
-        self::write($msg, $nb_eol);
+        static::write($msg, $nb_eol);
     }
 
     public static function error($msg, $nb_eol = 0)
@@ -25,20 +28,20 @@ class Console
 
     public static function errorLn($msg, $nb_eol = 1)
     {
-        self::error($msg, $nb_eol);
+        static::error($msg, $nb_eol);
     }
 
     public static function msgError($msg, $nb_eol = 1)
     {
         $color = new \Colors\Color();
-        self::errorLn($color($msg)->bg('red')->bold()->white(), $nb_eol);
+        static::errorLn($color($msg)->bg('red')->bold()->white(), $nb_eol);
     }
 
     public static function msgSuccess($msg, $nb_eol = 2)
     {
         $color = new \Colors\Color();
-        self::writeLn('');
-        self::writeLn(
+        static::writeLn('');
+        static::writeLn(
             $color(
                 \Commando\Util\Terminal::header(' ' . $msg)
             )->white()->bg('green')->bold(),
@@ -48,9 +51,17 @@ class Console
 
     public static function execute($funciton)
     {
+        if (static::$set_error_handler) {
+            static::_setErrorHandler();
+        }
+
         try {
             $funciton();
         } catch (\Exception $e) {
+            if (static::$beep_on_error) {
+                \Commando\Util\Terminal::beep();
+            }
+
             $msg = sprintf(
                 "PHP Fatal error:  Uncaught exception '%s' with message '%s' in %s:%s",
                 get_class($e),
@@ -58,13 +69,13 @@ class Console
                 $e->getFile(),
                 $e->getLine()
             );
-            self::msgError($msg);
+            static::msgError($msg);
 
             $color = new \Colors\Color();
 
-            self::error('Stack trace:');
-            self::error($color->bold($e->getTraceAsString()), true);
-            self::error(
+            static::error('Stack trace:');
+            static::error($color->bold($e->getTraceAsString()), true);
+            static::error(
                 sprintf(
                     $color->bold('  thrown in %s on line %s'),
                     $e->getFile(),
@@ -75,5 +86,15 @@ class Console
             exit(1);
         }
         exit(0);
+    }
+
+    protected static function _setErrorHandler()
+    {
+        set_error_handler(
+            function ($errno, $errstr, $errfile, $errline ) {
+                throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
+            },
+            error_reporting()
+        );
     }
 }
