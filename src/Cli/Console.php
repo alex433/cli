@@ -73,9 +73,9 @@ class Console
 
             $color = new \Colors\Color();
 
-            static::error('Stack trace:');
-            static::error($color->bold($e->getTraceAsString()), true);
-            static::error(
+            static::errorLn('Stack trace:');
+            static::errorLn($color->bold($e->getTraceAsString()));
+            static::errorLn(
                 sprintf(
                     $color->bold('  thrown in %s on line %s'),
                     $e->getFile(),
