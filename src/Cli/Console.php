@@ -13,36 +13,39 @@ class Console
 
     public static function write($msg, $nb_eol = 0)
     {
-        fwrite(static::$out, $msg . str_repeat(PHP_EOL, $nb_eol));
+        return fwrite(static::$out, $msg . str_repeat(PHP_EOL, $nb_eol));
     }
 
-    public static function writeLn($msg, $nb_eol = 1)
+    public static function writeLn($msg = '', $nb_eol = 1)
     {
-        static::write($msg, $nb_eol);
+        return static::write($msg, $nb_eol);
     }
 
     public static function error($msg, $nb_eol = 0)
     {
-        fwrite(static::$err, $msg . str_repeat(PHP_EOL, $nb_eol));
+        return fwrite(static::$err, $msg . str_repeat(PHP_EOL, $nb_eol));
     }
 
-    public static function errorLn($msg, $nb_eol = 1)
+    public static function errorLn($msg = '', $nb_eol = 1)
     {
-        static::error($msg, $nb_eol);
+        return static::error($msg, $nb_eol);
+    }
+
+    public static function text($msg = '')
+    {
+        return new \Colors\Color($msg);
     }
 
     public static function msgError($msg, $nb_eol = 1)
     {
-        $color = new \Colors\Color();
-        static::errorLn($color($msg)->bg('red')->bold()->white(), $nb_eol);
+        return static::errorLn(static::text($msg)->bg('red')->bold()->white(), $nb_eol);
     }
 
     public static function msgSuccess($msg, $nb_eol = 2)
     {
-        $color = new \Colors\Color();
         static::writeLn('');
         static::writeLn(
-            $color(
+            static::text(
                 \Commando\Util\Terminal::header(' ' . $msg)
             )->white()->bg('green')->bold(),
             $nb_eol
@@ -71,13 +74,11 @@ class Console
             );
             static::msgError($msg);
 
-            $color = new \Colors\Color();
-
             static::errorLn('Stack trace:');
-            static::errorLn($color->bold($e->getTraceAsString()));
+            static::errorLn(static::text($e->getTraceAsString())->bold());
             static::errorLn(
                 sprintf(
-                    $color->bold('  thrown in %s on line %s'),
+                    static::text('  thrown in %s on line %s')->bold(),
                     $e->getFile(),
                     $e->getLine()
                 )
