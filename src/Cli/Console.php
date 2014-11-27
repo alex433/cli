@@ -2,6 +2,9 @@
 
 namespace Cli;
 
+use Colors\Color;
+use Commando\Util\Terminal;
+
 class Console
 {
     public static $out = STDOUT;
@@ -11,63 +14,110 @@ class Console
     public static $beep_on_error = true;
     public static $set_error_handler = true;
 
+    /**
+     * @param string $msg Output message
+     * @param int    $nb_eol Number of the end of lines
+     *
+     * @return int
+     */
     public static function write($msg, $nb_eol = 0)
     {
         return fwrite(static::$out, $msg . str_repeat(PHP_EOL, $nb_eol));
     }
 
+    /**
+     * @param string $msg Output message
+     * @param int    $nb_eol Number of the end of lines
+     *
+     * @return int
+     */
     public static function writeLn($msg = '', $nb_eol = 1)
     {
         return static::write($msg, $nb_eol);
     }
 
+    /**
+     * @param string $msg Output message
+     * @param int    $nb_eol Number of the end of lines
+     *
+     * @return int
+     */
     public static function error($msg, $nb_eol = 0)
     {
         return fwrite(static::$err, $msg . str_repeat(PHP_EOL, $nb_eol));
     }
 
+    /**
+     * @param string $msg Output message
+     * @param int    $nb_eol Number of the end of lines
+     *
+     * @return int
+     */
     public static function errorLn($msg = '', $nb_eol = 1)
     {
         return static::error($msg, $nb_eol);
     }
 
+    /**
+     * Read line from input
+     *
+     * @return string
+     */
     public static function readLn()
     {
         return fgets(static::$in);
     }
 
+    /**
+     * @param string $msg Text message
+     *
+     * @return Color
+     */
     public static function text($msg = '')
     {
-        return new \Colors\Color($msg);
+        return new Color($msg);
     }
 
+    /**
+     * @param string $msg Error message
+     * @param int    $nb_eol Number of the end of lines
+     *
+     * @return int
+     */
     public static function msgError($msg, $nb_eol = 1)
     {
         return static::errorLn(static::text($msg)->bg('red')->bold()->white(), $nb_eol);
     }
 
+    /**
+     * @param string $msg Success message
+     * @param int    $nb_eol Number of the end of lines
+     */
     public static function msgSuccess($msg, $nb_eol = 2)
     {
         static::writeLn('');
         static::writeLn(
             static::text(
-                \Commando\Util\Terminal::header(' ' . $msg)
+                Terminal::header(' ' . $msg)
             )->white()->bg('green')->bold(),
             $nb_eol
         );
     }
 
-    public static function execute($funciton)
+    /**
+     * @param callable $callback
+     */
+    public static function execute(\Closure $callback)
     {
         if (static::$set_error_handler) {
             static::_setErrorHandler();
         }
 
         try {
-            $funciton();
+            $callback();
         } catch (\Exception $e) {
             if (static::$beep_on_error) {
-                \Commando\Util\Terminal::beep();
+                Terminal::beep();
             }
 
             $msg = sprintf(
@@ -94,6 +144,9 @@ class Console
         exit(0);
     }
 
+    /**
+     *  Override php error handler
+     */
     protected static function _setErrorHandler()
     {
         set_error_handler(
