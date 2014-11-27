@@ -31,6 +31,11 @@ class Console
         return static::error($msg, $nb_eol);
     }
 
+    public static function readLn()
+    {
+        return fgets(static::$in);
+    }
+
     public static function text($msg = '')
     {
         return new \Colors\Color($msg);
